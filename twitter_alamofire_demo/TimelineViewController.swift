@@ -7,15 +7,23 @@
 //
 
 import UIKit
+import Alamofire
+import AlamofireImage
 
 class TimelineViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var tweets: [Tweet] = []
     
     @IBOutlet weak var tableView: UITableView!
+    var refreshControl : UIRefreshControl!
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(TimelineViewController.didPullToReFresh(_:)), for: .valueChanged)
+       // refreshControl.addTarget(self, action: #selector(LogoutViewController.didPullToReFresh(_:)), for: .valueChanged)
+        tableView.insertSubview(refreshControl, at: 0)
         
         tableView.dataSource = self
         tableView.delegate = self
@@ -23,15 +31,11 @@ class TimelineViewController: UIViewController, UITableViewDelegate, UITableView
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 100
         
-        APIManager.shared.getHomeTimeLine { (tweets, error) in
-            if let tweets = tweets {
-                self.tweets = tweets
-                self.tableView.reloadData()
-            } else if let error = error {
-                print("Error getting home timeline: " + error.localizedDescription)
-            }
-        }
+        fetch()
+        
+        
     }
+    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tweets.count
@@ -41,6 +45,10 @@ class TimelineViewController: UIViewController, UITableViewDelegate, UITableView
         let cell = tableView.dequeueReusableCell(withIdentifier: "TweetCell", for: indexPath) as! TweetCell
         
         cell.tweet = tweets[indexPath.row]
+        let imagePath = URL(string: cell.tweet.user.profileImageUrl!)
+        cell.userImage.af_setImage(withURL: imagePath!)
+       // cell.userImage.af_setImage(withUrl: tweet.user.profileImageUrl)
+        
         
         return cell
     }
@@ -58,6 +66,25 @@ class TimelineViewController: UIViewController, UITableViewDelegate, UITableView
     @IBAction func didTapLogout(_ sender: Any) {
         APIManager.shared.logout()
     }
+    @objc func didPullToReFresh(_ refreshControl: UIRefreshControl){
+        fetch()
+    }
+    func fetch(){
+       print("Reloading Data")
+        APIManager.shared.getHomeTimeLine { (tweets, error) in
+            if let tweets = tweets {
+                self.tweets = tweets
+                self.tableView.reloadData()
+            } else if let error = error {
+                print("Error getting home timeline: " + error.localizedDescription)
+            }
+        }
+        
+        
+        
+    }
+    
+   
     
     
     /*

@@ -7,13 +7,23 @@
 //
 
 import Foundation
+import UIKit
 
 class User {
     
-    var name: String
+    var name: String?
+    var screenName: String?
+    var profileImageUrl: String?
+    var profileImage: UIImage?
+    
+    static var current: User?
     
     init(dictionary: [String: Any]) {
-        name = dictionary["name"] as! String
-
+        name = dictionary["name"] as? String
+        screenName = dictionary["screen_name"] as? String
+        profileImageUrl = dictionary["profile_image_url_https"] as? String
+        profileImage = UIImage()
+        
+        // Initialize any other properties
     }
 }
