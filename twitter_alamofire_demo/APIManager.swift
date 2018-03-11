@@ -15,8 +15,8 @@ import KeychainAccess
 class APIManager: SessionManager {
     
     // MARK: TODO: Add App Keys
-    static let consumerKey = "lhXUod1WjNPxy9HaW3BoyObGD"
-    static let consumerSecret = "mB195iOABmf5PFteAAVFKIPHyw4BazP5a0Vleq9ZgbdDk0yPqC"
+    static let consumerKey = "p9btAcCA9n238bjAqR71Kh3am"
+    static let consumerSecret = "2vokqD2TVaU8Mw2tEkMk5E7K6sZRfDx2ORqZmJKm9taJUOUMKj"
 
     static let requestTokenURL = "https://api.twitter.com/oauth/request_token"
     static let authorizeURL = "https://api.twitter.com/oauth/authorize"
@@ -38,8 +38,8 @@ class APIManager: SessionManager {
                 if let error = error {
                     failure(error)
                 } else if let user = user {
-                    print("Welcome \(user.name)")
-                    
+                    //print("Welcome \(user.name)")
+                    User.current = user
                     // MARK: TODO: set User.current, so that it's persisted
                     
                     success()
@@ -131,6 +131,18 @@ class APIManager: SessionManager {
         }
     }
     
+    func composeTweet(with text: String, completion: @escaping (Tweet?, Error?) -> ()) {
+        let urlString = "https://api.twitter.com/1.1/statuses/update.json"
+        let parameters = ["status": text]
+        oauthManager.client.post(urlString, parameters: parameters, headers: nil, body: nil, success: { (response: OAuthSwiftResponse) in
+            let tweetDictionary = try! response.jsonObject() as! [String: Any]
+            let tweet = Tweet(dictionary: tweetDictionary)
+            completion(tweet, nil)
+        }) { (error: OAuthSwiftError) in
+            completion(nil, error.underlyingError)
+        }
+    }
+    
     // MARK: TODO: Favorite a Tweet
     
     // MARK: TODO: Un-Favorite a Tweet
@@ -142,6 +154,76 @@ class APIManager: SessionManager {
     // MARK: TODO: Compose Tweet
     
     // MARK: TODO: Get User Timeline
+    
+    // MARK: TODO: Un-Favorite a Tweet
+    func unfavorite(with tweet: Tweet, completion: @escaping (Tweet?, Error?) -> ()) {
+        let parameters = ["id": tweet.id]
+        
+        let id : Int64 = tweet.id
+        let idString = String(id)
+        let baseURL = "https://api.twitter.com/1.1/favorites/destroy.json?id="
+        
+        let url = baseURL + idString
+        print(url)
+        
+        request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { (response) in
+            print("response: " + String(response.result.isSuccess))
+            if response.result.isSuccess,
+                let tweetDictionary = response.result.value as? [String: Any] {
+                let tweet = Tweet(dictionary: tweetDictionary)
+                completion(tweet, nil)
+            } else {
+                print("There was an error")
+                completion(nil, response.result.error)
+            }
+        }
+        
+    }
+    // MARK: TODO: Retweet
+    func retweet(with tweet: Tweet, completion: @escaping (Tweet?, Error?) -> ()) {
+        let parameters = ["id": tweet.id]
+        
+        let id : Int64 = tweet.id
+        let idString = String(id)
+        let baseURL = "https://api.twitter.com/1.1/statuses/retweet/"
+        let url = baseURL + idString + ".json"
+        print(url)
+        
+        request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { (response) in
+            print("response: " + String(response.result.isSuccess))
+            if response.result.isSuccess,
+                let tweetDictionary = response.result.value as? [String: Any] {
+                let tweet = Tweet(dictionary: tweetDictionary)
+                completion(tweet, nil)
+            } else {
+                print("There was an error")
+                completion(nil, response.result.error)
+            }
+        }
+    }
+    // MARK: TODO: Un-Retweet
+    func unretweet(with tweet: Tweet, completion: @escaping (Tweet?, Error?) -> ()) {
+        let parameters = ["id": tweet.id]
+        
+        let id : Int64 = tweet.id
+        let idString = String(id)
+        let baseURL = "https://api.twitter.com/1.1/statuses/unretweet/"
+        let url = baseURL + idString + ".json"
+        print(url)
+        
+        request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { (response) in
+            print("response: " + String(response.result.isSuccess))
+            if response.result.isSuccess,
+                let tweetDictionary = response.result.value as? [String: Any] {
+                let tweet = Tweet(dictionary: tweetDictionary)
+                completion(tweet, nil)
+            } else {
+                print("There was an error")
+                completion(nil, response.result.error)
+            }
+        }
+        
+    }
     
     
     //--------------------------------------------------------------------------------//

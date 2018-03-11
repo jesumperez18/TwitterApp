@@ -13,6 +13,8 @@ target 'twitter_alamofire_demo' do
   pod 'TTTAttributedLabel'
   pod 'LBTAComponents'
   pod 'AlamofireImage', '~> 3.3'
+  pod 'UITextView+Placeholder', '~> 1.2'
+  
 
   target 'twitter_alamofire_demoTests' do
     inherit! :search_paths

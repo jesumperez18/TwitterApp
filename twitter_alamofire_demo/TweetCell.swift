@@ -9,6 +9,7 @@
 import UIKit
 import LBTAComponents
 import Alamofire
+import AlamofireImage
 
 
 
@@ -30,6 +31,10 @@ class TweetCell: UITableViewCell {
     
     var tweet: Tweet! {
         didSet {
+            
+            let url = tweet.user.profile_url
+            userImage.af_setImage(withURL: url)
+
             tweetTextLabel.text = tweet.text
             created_at.text = tweet.createdAtString
             username.text = tweet.user.name
@@ -38,6 +43,7 @@ class TweetCell: UITableViewCell {
             retweeted.text = "\(tweet.retweetCount)"
             favorited.text = "\(tweet.favoriteCount ?? 0)"
             //profileImageView.loadImage(urlString: tweet.user.profileImageUrl!)
+            
         
             
         }

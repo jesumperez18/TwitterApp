@@ -10,7 +10,11 @@ import UIKit
 import Alamofire
 import AlamofireImage
 
-class TimelineViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class TimelineViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ComposeViewControllerDelegate {
+    func did(post: Tweet) {
+        fetch()
+    }
+    
     
     var tweets: [Tweet] = []
     
@@ -36,7 +40,15 @@ class TimelineViewController: UIViewController, UITableViewDelegate, UITableView
         
     }
     
+    @IBAction func didTapCompose(_ sender: Any) {
+         self.performSegue(withIdentifier: "composeSegue", sender: nil)
+        
+        
+    }
     
+    @IBAction func onProfileClick(_ sender: Any) {
+        self.performSegue(withIdentifier: "profileSegue", sender: nil)
+    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tweets.count
     }
@@ -45,8 +57,8 @@ class TimelineViewController: UIViewController, UITableViewDelegate, UITableView
         let cell = tableView.dequeueReusableCell(withIdentifier: "TweetCell", for: indexPath) as! TweetCell
         
         cell.tweet = tweets[indexPath.row]
-        let imagePath = URL(string: cell.tweet.user.profileImageUrl!)
-        cell.userImage.af_setImage(withURL: imagePath!)
+//        let imagePath = URL(string: cell.tweet.user.profileImageUrl!)
+//        cell.userImage.af_setImage(withURL: imagePath!)
        // cell.userImage.af_setImage(withUrl: tweet.user.profileImageUrl)
         
         
@@ -62,6 +74,17 @@ class TimelineViewController: UIViewController, UITableViewDelegate, UITableView
         // Dispose of any resources that can be recreated.
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? DetailViewController{
+            let senderCell = sender as! TweetCell
+            let indexPath = tableView.indexPath(for: senderCell)
+            vc.tweet = tweets[(indexPath?.row)!]
+        }
+
+        
+    }
+    
+  
     
     @IBAction func didTapLogout(_ sender: Any) {
         APIManager.shared.logout()
@@ -79,6 +102,8 @@ class TimelineViewController: UIViewController, UITableViewDelegate, UITableView
                 print("Error getting home timeline: " + error.localizedDescription)
             }
         }
+        
+        
         
         
         

@@ -9,6 +9,7 @@ PODS:
     - Alamofire
     - OAuthSwift
   - TTTAttributedLabel (2.0.0)
+  - UITextView+Placeholder (1.2.0)
 
 DEPENDENCIES:
   - Alamofire
@@ -18,6 +19,7 @@ DEPENDENCIES:
   - OAuthSwift (= 1.1.1)
   - OAuthSwiftAlamofire
   - TTTAttributedLabel
+  - UITextView+Placeholder (~> 1.2)
 
 SPEC CHECKSUMS:
   Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
@@ -27,7 +29,8 @@ SPEC CHECKSUMS:
   OAuthSwift: 6e3a103b3e5639411769cc7e199ec7e14bd1547f
   OAuthSwiftAlamofire: 20bb998ac506f82c3bab0625fbc98a9c6fca783f
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
+  UITextView+Placeholder: 77680995fcdd07c3f52ec92fe1150874a2ac89ff
 
-PODFILE CHECKSUM: cc6cdbbf6e0dcda2bec1f189377a57826967db28
+PODFILE CHECKSUM: da0c65168f0717a3332674e9e68b3f7cc90d0321
 
 COCOAPODS: 1.4.0
